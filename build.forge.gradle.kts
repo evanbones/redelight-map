@@ -1,10 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.kotlin.dsl.register
-import kotlin.collections.component1
-
 plugins {
-    alias(libs.plugins.fabric.loom)
+    alias(libs.plugins.neoforge.moddev.legacyforge)
     alias(libs.plugins.jsonlang)
     alias(libs.plugins.modpublish)
 }
@@ -12,17 +9,20 @@ plugins {
 val (minVersion, maxVersion) = (property("mod.minecraft") as String).split('-')
 
 val requiredJava = when {
-    stonecutter.eval(minVersion, ">=1.20.5") -> JavaVersion.VERSION_21
     stonecutter.eval(minVersion, ">=1.18") -> JavaVersion.VERSION_17
     stonecutter.eval(minVersion, ">=1.17") -> JavaVersion.VERSION_16
     else -> JavaVersion.VERSION_1_8
 }
 
-stonecutter.replacements.regex(requiredJava.isJava9Compatible) {
-    replace(
-        " \\((.+) \\* (.+?) \\+ (.+?)\\)" to $$" Math.fma($1, $2, $3)",
-        " Math\\.fma\\((.*?), (.*?), (.*?)\\)" to $$" ($1 * $2 + $3)"
-    )
+val packFormat = when {
+    stonecutter.eval(minVersion, ">=1.20") -> 15
+    stonecutter.eval(minVersion, ">=1.19") -> 9
+    else -> 8
+}
+val dataFormat = when {
+    stonecutter.eval(minVersion, ">=1.20") -> 15
+    stonecutter.eval(minVersion, ">=1.19") -> 10
+    else -> 8
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -30,15 +30,19 @@ tasks.named<ProcessResources>("processResources") {
 
     val props = HashMap<String, String>().apply {
         this["version"] = prop("mod.version")
-        this["java"] = ">=${requiredJava.majorVersion}"
+        this["loaderVersion"] = prop("deps.forge-loader")
+        this["forgeVersion"] = prop("deps.forge")
+        this["minecraftVersionRange"] = "[$minVersion,$maxVersion]"
+        this["packFormat"] = packFormat.toString()
+        this["dataFormat"] = dataFormat.toString()
     }
 
-    filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml")) {
+    filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
         expand(props)
     }
 }
 
-version = "${property("mod.version")}+${property("mod.minecraft")}-fabric"
+version = "${property("mod.version")}+${property("mod.minecraft")}-forge"
 base.archivesName = property("mod.id") as String
 
 jsonlang {
@@ -46,44 +50,38 @@ jsonlang {
     prettyPrint = true
 }
 
-repositories {
-    mavenLocal()
+legacyForge {
+    version = "${stonecutter.current.version}-${property("deps.forge")}"
+    validateAccessTransformers = true
+
+    runs {
+        register("client") {
+            client()
+            gameDirectory = file("../../run/")
+        }
+    }
+
+    mods {
+        register(property("mod.id") as String) {
+            sourceSet(sourceSets["main"])
+        }
+    }
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${stonecutter.current.version}")
-    mappings(loom.layered {
-        officialMojangMappings()
-    })
-    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric-loader")}")
-
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
-}
-
-loom {
-    fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
-    accessWidenerPath = rootProject.file("src/main/resources/redelightmap.classtweaker")
-
-    decompilerOptions.named("vineflower") {
-        options.put("mark-corresponding-synthetics", "1")
-    }
-
-    runConfigs.named("client") {
-        ideConfigGenerated(true)
-        vmArgs("-Dmixin.debug.export=true")
-        runDir = "../../run"
-    }
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:${libs.versions.mixinextras.get()}")!!)
 }
 
 tasks {
     processResources {
-        exclude("**/neoforge.mods.toml", "**/mods.toml", "**/pack.mcmeta")
+        exclude("**/fabric.mod.json", "**/*.classtweaker", "**/neoforge.mods.toml")
     }
 
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(remapJar.map { it.archiveFile })
+        from(jar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
@@ -95,13 +93,13 @@ java {
 }
 
 publishMods {
-    file = tasks.remapJar.map { it.archiveFile.get() }
+    file = tasks.jar.map { it.archiveFile.get() }
 
     type = STABLE
-    displayName = "${property("mod.name")} v${property("mod.version")} for ${property("mod.minecraft")} Fabric"
-    version = "${property("mod.version")}+${property("mod.minecraft")}-fabric"
+    displayName = "${property("mod.name")} v${property("mod.version")} for ${property("mod.minecraft")} Forge"
+    version = "${property("mod.version")}+${property("mod.minecraft")}-forge"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
-    modLoaders.add("fabric")
+    modLoaders.add("forge")
 
     modrinth {
         projectId = property("publish.modrinth") as String

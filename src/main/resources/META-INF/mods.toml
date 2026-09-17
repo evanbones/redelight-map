@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[1,)"
+loaderVersion = "${loaderVersion}"
 license = "CC-BY-NC-SA-4.0"
 issueTrackerURL = "https://github.com/evanbones/redelight-map/issues"
 
@@ -14,14 +14,19 @@ Fork of Delight-(down)map by ConfiG to fix mod incompatibilities.
 credits = "Enchanted_Games for making Delight-map. ConfiG for making Delight-(down)map."
 logoFile = "assets/icon.png"
 displayURL = "https://modrinth.com/mod/redelight-map"
-features = { javaVersion = "${java}" }
 
 [[dependencies.redelightmap]]
-modId = "neoforge"
+modId = "forge"
+mandatory = true
+versionRange = "[${forgeVersion},)"
+ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.redelightmap]]
 modId = "minecraft"
+mandatory = true
+versionRange = "${minecraftVersionRange}"
+ordering = "NONE"
 side = "CLIENT"
 
 [[mixins]]

@@ -1,5 +1,7 @@
-package cgytrus.delightmap.mixin;
+package evandev.redelightmap.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -58,12 +60,8 @@ public abstract class LightTextureMixin {
     @Final
     private NativeImage lightPixels;
 
-    /**
-     * @author ConfiG
-     * @reason Completely replaces the vanilla lightmap by design
-     */
-    @Overwrite
-    public void updateLightTexture(float partialTicks) {
+    @WrapMethod(method = "updateLightTexture")
+    public void updateLightTexture(float partialTicks, Operation<Void> original) {
         if (!this.updateLightTexture)
             return;
 

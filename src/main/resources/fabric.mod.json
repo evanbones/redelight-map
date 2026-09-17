@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "delightmap",
+  "id": "redelightmap",
   "version": "${version}",
-  "name": "Delight-(down)map",
-  "description": "Port of Delight-map by Enchanted_Games to older Minecraft versions.",
+  "name": "Redelight-map",
+  "description": "Fork of Delight-(down)map by ConfiG to fix mod incompatibilities.",
   "authors": [
     {
-      "name": "ConfiG",
+      "name": "evanbones",
       "contact": {
-        "homepage": "https://cgyt.ru"
+        "homepage": "https://evanbowness.dev"
       }
     }
   ],
   "contact": {
-    "homepage": "https://modrinth.com/mod/delight-down-map",
-    "sources": "https://github.com/cgytrus/delightmap",
-    "issues": "https://github.com/cgytrus/delightmap/issues"
+    "homepage": "https://modrinth.com/mod/redelight-map",
+    "sources": "https://github.com/evanbones/redelight-map",
+    "issues": "https://github.com/evanbones/redelight-map/issues"
   },
   "license": "CC-BY-NC-SA-4.0",
   "icon": "assets/icon.png",
   "environment": "client",
   "mixins": [
-    "delightmap.mixins.json"
+    "redelightmap.mixins.json"
   ],
-  "accessWidener": "delightmap.classtweaker",
+  "accessWidener": "redelightmap.classtweaker",
   "depends": {
     "java": "${java}"
   }

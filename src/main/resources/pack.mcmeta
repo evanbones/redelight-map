@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "description": "Redelight-map resources",
+    "pack_format": ${packFormat},
+    "forge:resource_pack_format": ${packFormat},
+    "forge:data_pack_format": ${dataFormat}
+  }
+}

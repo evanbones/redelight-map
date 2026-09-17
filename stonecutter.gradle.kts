@@ -2,6 +2,7 @@ plugins {
     id("dev.kikugie.stonecutter")
     alias(libs.plugins.fabric.loom) apply false
     alias(libs.plugins.neoforge.moddev) apply false
+    alias(libs.plugins.neoforge.moddev.legacyforge) apply false
     alias(libs.plugins.jsonlang) apply false
     alias(libs.plugins.modpublish) apply false
 }
@@ -9,10 +10,10 @@ plugins {
 stonecutter active "1.21.1-fabric"
 
 stonecutter parameters {
-    constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
+    constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge", "forge")
 }
 
 stonecutter tasks {
     order("publishModrinth")
-    //order("publishCurseforge")
+    // order("publishCurseforge")
 }

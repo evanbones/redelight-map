@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "cgytrus.delightmap.mixin",
+  "package": "evandev.redelightmap.mixin",
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [

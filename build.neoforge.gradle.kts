@@ -54,9 +54,14 @@ neoForge {
     sourceSets["main"].resources.srcDir("src/main/generated")
 }
 
+dependencies {
+    compileOnly(libs.mixinextras.common)
+    annotationProcessor(libs.mixinextras.common)
+}
+
 tasks {
     processResources {
-        exclude("**/fabric.mod.json", "**/*.classtweaker", "**/mods.toml")
+        exclude("**/fabric.mod.json", "**/*.classtweaker", "**/mods.toml", "**/pack.mcmeta")
     }
 
     named("createMinecraftArtifacts") {
@@ -80,9 +85,9 @@ publishMods {
     file = tasks.jar.map { it.archiveFile.get() }
 
     type = STABLE
-    displayName = "${property("mod.name")} v${property("mod.version")} for ${property("mod.minecraft")} Neoforge"
+    displayName = "${property("mod.name")} v${property("mod.version")} for ${property("mod.minecraft")} NeoForge"
     version = "${property("mod.version")}+${property("mod.minecraft")}-neoforge"
-    changelog = provider { rootProject.file("CHANGELOG.md").readText() }
+    changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("neoforge")
 
     modrinth {
@@ -91,6 +96,18 @@ publishMods {
         minecraftVersionRange {
             start = minVersion
             end = maxVersion
+        }
+    }
+
+    val curseforgeId = property("publish.curseforge") as String
+    if (curseforgeId.isNotBlank()) {
+        curseforge {
+            projectId = curseforgeId
+            accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+            minecraftVersionRange {
+                start = minVersion
+                end = maxVersion
+            }
         }
     }
 }
