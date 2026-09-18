@@ -89,7 +89,12 @@ public abstract class LightTextureMixin {
 
         float blockLightRedFlicker = this.blockLightRedFlicker;
 
-        float skyFactor = level.getSkyFlashTime() > 0 ? 1.0f : skyDarken * 0.95f + 0.05f;
+        float dayMultiplier = Math.max(0.0f, RedelightMapConfig.brightness);
+        float nightMultiplier = Math.max(0.0f, 2.0f - RedelightMapConfig.darkness);
+        float dayTime = Mth.clamp((skyDarken - 0.2f) / 0.8f, 0.0f, 1.0f);
+        float timeMultiplier = Mth.lerp(dayTime, nightMultiplier, dayMultiplier);
+
+        float skyFactor = (level.getSkyFlashTime() > 0 ? 1.0f : skyDarken * 0.95f + 0.05f) * timeMultiplier;
         float blockFactor = useBrightLightmap ? 1.4f : (blockLightRedFlicker + 1.5f);
         float nightVisionFactor = 0.0f;
         float darkenWorldFactor = Math.max(0.0f, this.renderer.getDarkenWorldAmount(partialTicks));
@@ -192,6 +197,9 @@ public abstract class LightTextureMixin {
                 }
                 else {
                     brightnessAdjustment = (brightnessFactor - 0.2f) / 4.0f;
+                }
+                if (brightnessAdjustment > 0.0f) {
+                    brightnessAdjustment *= timeMultiplier;
                 }
                 color.add(brightnessAdjustment, brightnessAdjustment, brightnessAdjustment);
 

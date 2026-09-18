@@ -8,6 +8,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import evandev.redelightmap.RedelightMapConfig;
 import net.minecraft.client.gui.screens.Screen;
@@ -50,8 +51,14 @@ public final class RedelightMapConfigScreen {
 
         try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             JsonObject json = GSON.fromJson(reader, JsonObject.class);
-            if (json != null && json.has("enabled"))
-                RedelightMapConfig.enabled = json.get("enabled").getAsBoolean();
+            if (json != null) {
+                if (json.has("enabled"))
+                    RedelightMapConfig.enabled = json.get("enabled").getAsBoolean();
+                if (json.has("brightness"))
+                    RedelightMapConfig.brightness = json.get("brightness").getAsFloat();
+                if (json.has("darkness"))
+                    RedelightMapConfig.darkness = json.get("darkness").getAsFloat();
+            }
         } catch (IOException ignored) {
         }
     }
@@ -59,6 +66,8 @@ public final class RedelightMapConfigScreen {
     private static void save() {
         JsonObject json = new JsonObject();
         json.addProperty("enabled", RedelightMapConfig.enabled);
+        json.addProperty("brightness", RedelightMapConfig.brightness);
+        json.addProperty("darkness", RedelightMapConfig.darkness);
 
         try (Writer writer = Files.newBufferedWriter(configPath(), StandardCharsets.UTF_8)) {
             GSON.toJson(json, writer);
@@ -86,6 +95,24 @@ public final class RedelightMapConfigScreen {
                         .description(OptionDescription.of(Component.translatable("redelightmap.config.option.enabled.description")))
                         .binding(true, () -> RedelightMapConfig.enabled, value -> RedelightMapConfig.enabled = value)
                         .controller(TickBoxControllerBuilder::create)
+                        .build())
+                    .option(Option.<Float>createBuilder()
+                        .name(Component.translatable("redelightmap.config.option.brightness"))
+                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.brightness.description")))
+                        .binding(1.0f, () -> RedelightMapConfig.brightness, value -> RedelightMapConfig.brightness = value)
+                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                            .range(0.0f, 2.0f)
+                            .step(0.05f)
+                            .formatValue(v -> Component.literal(Math.round(v * 100.0f) + "%")))
+                        .build())
+                    .option(Option.<Float>createBuilder()
+                        .name(Component.translatable("redelightmap.config.option.darkness"))
+                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.darkness.description")))
+                        .binding(1.0f, () -> RedelightMapConfig.darkness, value -> RedelightMapConfig.darkness = value)
+                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                            .range(0.0f, 2.0f)
+                            .step(0.05f)
+                            .formatValue(v -> Component.literal(Math.round(v * 100.0f) + "%")))
                         .build())
                     .build())
                 .build())
