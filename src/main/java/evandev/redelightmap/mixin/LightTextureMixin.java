@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.platform.NativeImage;
 import evandev.redelightmap.RedelightMapConfig;
+import evandev.redelightmap.compat.DistantHorizonsCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -13,6 +14,14 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import org.spongepowered.asm.mixin.*;
+
+//? if fabric {
+import net.fabricmc.loader.api.FabricLoader;
+//? } else if forge {
+/*import net.minecraftforge.fml.ModList;
+*///? } else {
+/*import net.neoforged.fml.ModList;
+*///? }
 
 //? if <=1.19.2 {
 /*import com.mojang.math.Vector3f;
@@ -56,6 +65,15 @@ public abstract class LightTextureMixin {
     @Final
     private NativeImage lightPixels;
 
+    @Unique
+    private static boolean isDhLoaded() {
+        //? if fabric {
+        return FabricLoader.getInstance().isModLoaded("distanthorizons");
+        //? } else {
+        /*return ModList.get().isLoaded("distanthorizons");
+        *///? }
+    }
+
     @WrapMethod(method = "updateLightTexture")
     public void updateLightTexture(float partialTicks, Operation<Void> original) {
         if (!RedelightMapConfig.enabled) {
@@ -63,19 +81,15 @@ public abstract class LightTextureMixin {
             return;
         }
 
-        if (!this.updateLightTexture)
-            return;
+        if (this.updateLightTexture) {
+            ClientLevel level = this.minecraft.level;
 
-        ClientLevel level = this.minecraft.level;
+            LocalPlayer player = this.minecraft.player;
 
-        LocalPlayer player = this.minecraft.player;
+            if (level != null && player != null) {
+                this.updateLightTexture = false;
 
-        if (level == null || player == null)
-            return;
-
-        this.updateLightTexture = false;
-
-        this.minecraft.getProfiler().push("lightTex");
+                this.minecraft.getProfiler().push("lightTex");
 
         float skyDarken = level.getSkyDarken(1.0f);
 
@@ -220,5 +234,11 @@ public abstract class LightTextureMixin {
 
         this.lightTexture.upload();
         this.minecraft.getProfiler().pop();
+            }
+        }
+
+        if (isDhLoaded()) {
+            DistantHorizonsCompat.updateLightmap(this.lightPixels);
+        }
     }
 }
