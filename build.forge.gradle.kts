@@ -112,6 +112,7 @@ publishMods {
     modrinth {
         projectId = property("publish.modrinth") as String
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        environment = CLIENT_ONLY
         minecraftVersionRange {
             start = minVersion
             end = maxVersion
@@ -123,6 +124,8 @@ publishMods {
         curseforge {
             projectId = curseforgeId
             accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+            client = true
+            server = false
             minecraftVersionRange {
                 start = minVersion
                 end = maxVersion

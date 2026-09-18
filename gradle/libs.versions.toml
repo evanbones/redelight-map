@@ -6,7 +6,7 @@ mixinextras-common = { module = "io.github.llamalad7:mixinextras-common", versio
 
 [plugins]
 jsonlang = { id = "dev.kikugie.postprocess.jsonlang", version = "2.1-beta.4" }
-modpublish = { id = "me.modmuss50.mod-publish-plugin", version = "1.1.0" }
+modpublish = { id = "me.modmuss50.mod-publish-plugin", version = "2.2.0" }
 
 fabric-loom = { id = "fabric-loom", version = "1.14.9" }
 neoforge-moddev = { id = "net.neoforged.moddev", version = "2.0.134" }
