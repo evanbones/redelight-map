@@ -54,9 +54,18 @@ neoForge {
     sourceSets["main"].resources.srcDir("src/main/generated")
 }
 
+repositories {
+    maven("https://maven.isxander.dev/releases") { name = "IsXander" }
+    maven("https://thedarkcolour.github.io/KotlinForForge/") { name = "KotlinForForge" }
+}
+
 dependencies {
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
+
+    findProperty("deps.yacl")?.let {
+        implementation("dev.isxander:yet-another-config-lib:$it")
+    }
 }
 
 tasks {

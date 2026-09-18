@@ -25,6 +25,8 @@ stonecutter.replacements.regex(requiredJava.isJava9Compatible) {
     )
 }
 
+val hasModMenuIntegration = stonecutter.eval(stonecutter.current.version, ">=1.20.1")
+
 tasks.named<ProcessResources>("processResources") {
     fun prop(name: String) = project.property(name) as String
 
@@ -35,6 +37,17 @@ tasks.named<ProcessResources>("processResources") {
 
     filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml")) {
         expand(props)
+    }
+
+    if (!hasModMenuIntegration) {
+        doLast {
+            val fmj = File(destinationDir, "fabric.mod.json")
+            fmj.writeText(
+                fmj.readText()
+                    .replace(Regex("""\s*"entrypoints":\s*\{.*?},""", RegexOption.DOT_MATCHES_ALL), "")
+                    .replace(Regex(""",\s*"suggests":\s*\{.*?}""", RegexOption.DOT_MATCHES_ALL), "")
+            )
+        }
     }
 }
 
@@ -48,6 +61,8 @@ jsonlang {
 
 repositories {
     mavenLocal()
+    maven("https://maven.isxander.dev/releases") { name = "IsXander" }
+    maven("https://maven.terraformersmc.com/releases") { name = "TerraformersMC" }
 }
 
 dependencies {
@@ -59,6 +74,18 @@ dependencies {
 
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
+
+    findProperty("deps.yacl")?.let {
+        modImplementation("dev.isxander:yet-another-config-lib:$it")
+    }
+    findProperty("deps.modmenu")?.let {
+        modCompileOnly("com.terraformersmc:modmenu:$it") {
+            exclude(group = "eu.pb4", module = "placeholder-api")
+        }
+        modLocalRuntime("com.terraformersmc:modmenu:$it") {
+            exclude(group = "eu.pb4", module = "placeholder-api")
+        }
+    }
 }
 
 loom {

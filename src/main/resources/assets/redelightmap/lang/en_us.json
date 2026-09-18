@@ -1,0 +1,7 @@
+{
+  "redelightmap.config.title": "Redelight-map",
+  "redelightmap.config.category.general": "General",
+  "redelightmap.config.group.general": "General",
+  "redelightmap.config.option.enabled": "Enabled",
+  "redelightmap.config.option.enabled.description": "Toggles Redelight-map's custom lightmap on and off."
+}

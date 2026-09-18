@@ -13,7 +13,11 @@ stonecutter parameters {
     constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge", "forge")
 }
 
+stonecutter handlers {
+    inherit("yml", "toml")
+}
+
 stonecutter tasks {
     order("publishModrinth")
-    // order("publishCurseforge")
+    order("publishCurseforge")
 }

@@ -3,14 +3,15 @@ package evandev.redelightmap.mixin;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.platform.NativeImage;
+import evandev.redelightmap.RedelightMapConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.dimension.DimensionType;
 import org.spongepowered.asm.mixin.*;
 
 //? if <=1.19.2 {
@@ -36,13 +37,8 @@ public abstract class LightTextureMixin {
     @Final
     private DynamicTexture lightTexture;
 
-    //? if >1.14.4 {
     @Shadow
     private float blockLightRedFlicker;
-    //? } else {
-    /*@Shadow
-    private float blockLightRed;
-    *///? }
 
     //? if >1.18.2 {
     @Shadow
@@ -62,14 +58,15 @@ public abstract class LightTextureMixin {
 
     @WrapMethod(method = "updateLightTexture")
     public void updateLightTexture(float partialTicks, Operation<Void> original) {
+        if (!RedelightMapConfig.enabled) {
+            original.call(partialTicks);
+            return;
+        }
+
         if (!this.updateLightTexture)
             return;
 
-        //? if >1.14.4 {
-        net.minecraft.client.multiplayer.ClientLevel level = this.minecraft.level;
-        //? } else {
-        /*net.minecraft.client.multiplayer.MultiPlayerLevel level = this.minecraft.level;
-        *///? }
+        ClientLevel level = this.minecraft.level;
 
         LocalPlayer player = this.minecraft.player;
 
@@ -84,25 +81,13 @@ public abstract class LightTextureMixin {
 
         //? if >1.18.2 {
         float ambientLightFactor = level.dimensionType().ambientLight();
-        //? } else if >1.15.2 {
+        //? } else {
         /*float ambientLightFactor = level.dimensionType().brightness(0);
-        *///? } else if >1.14.4 {
-        /*float ambientLightFactor = level.getDimension().getBrightness(0);
-        *///? } else {
-        /*float ambientLightFactor = level.getDimension().getBrightnessRamp()[0];
         *///? }
 
-        //? if >1.15.2 {
         boolean useBrightLightmap = level.effects().forceBrightLightmap();
-        //? } else {
-        /*boolean useBrightLightmap = level.dimension.getType() == DimensionType.THE_END;
-        *///? }
 
-        //? if >1.14.4 {
         float blockLightRedFlicker = this.blockLightRedFlicker;
-        //? } else {
-        /*float blockLightRedFlicker = this.blockLightRed * 0.1f;
-        *///? }
 
         float skyFactor = level.getSkyFlashTime() > 0 ? 1.0f : skyDarken * 0.95f + 0.05f;
         float blockFactor = useBrightLightmap ? 1.4f : (blockLightRedFlicker + 1.5f);
@@ -118,11 +103,7 @@ public abstract class LightTextureMixin {
 
         float waterVision = player.getWaterVision();
         if (player.hasEffect(MobEffects.NIGHT_VISION)) {
-            //? if >1.14.4 {
             nightVisionFactor = GameRenderer.getNightVisionScale(player, partialTicks);
-            //? } else {
-            /*nightVisionFactor = this.renderer.getNightVisionScale(player, partialTicks);
-            *///? }
         }
         else if (waterVision > 0.0f && player.hasEffect(MobEffects.CONDUIT_POWER)) {
             nightVisionFactor = waterVision;

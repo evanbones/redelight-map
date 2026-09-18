@@ -68,10 +68,18 @@ legacyForge {
     }
 }
 
+repositories {
+    maven("https://maven.isxander.dev/releases") { name = "IsXander" }
+}
+
 dependencies {
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:${libs.versions.mixinextras.get()}")!!)
+
+    findProperty("deps.yacl")?.let {
+        modImplementation("dev.isxander:yet-another-config-lib:$it")
+    }
 }
 
 tasks {

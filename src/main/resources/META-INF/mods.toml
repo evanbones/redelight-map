@@ -31,3 +31,11 @@ side = "CLIENT"
 
 [[mixins]]
 config = "redelightmap.mixins.json"
+
+#? if >=1.20.1 {
+[[dependencies.redelightmap]]
+modId = "yet_another_config_lib_v3"
+mandatory = false
+versionRange = "[0,)"
+side = "CLIENT"
+#? }
