@@ -25,9 +25,11 @@ public final class RedelightMap implements ClientModInitializer, ModMenuApi {
 //? }
 //? } else if forge {
 /*import net.minecraftforge.fml.common.Mod;
+//? if >=1.20.1 {
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.client.ConfigScreenHandler;
 import evandev.redelightmap.config.RedelightMapConfigScreen;
+//? }
 
 @Mod(RedelightMap.MOD_ID)
 public final class RedelightMap {

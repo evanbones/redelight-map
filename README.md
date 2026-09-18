@@ -18,7 +18,7 @@ Please, report all issues while using this mod here, not to the resource pack de
 
 All 5 of these issues upstream (which stem from the same issue of the mixin being overly invasive) have been fixed in this fork. As well, Redelight-map supports more versions, including some Legacyforge versions.
 
-There's also optional [YACL](https://modrinth.com/mod/yacl integration to toggle the mod on and off.
+There's also optional [YACL](https://modrinth.com/mod/yacl) integration to toggle the mod on and off.
 
 ## Version Support
 
