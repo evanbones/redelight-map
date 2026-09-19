@@ -109,7 +109,8 @@ public abstract class LightTextureMixin {
         float moonPhaseMultiplier = Mth.lerp(RedelightMapConfig.moonPhaseDarkness,1.0f, level.getMoonBrightness());
         moonPhaseMultiplier = Mth.lerp(nightTime, 1.0f, moonPhaseMultiplier);
 
-        float skyFactor = level.getSkyFlashTime() > 0 ? 1.0f : ((skyDarken * 0.95f + 0.05f) * moonPhaseMultiplier);
+        float skyBase = (skyDarken * 0.95f + 0.05f);
+        float skyFactor = level.getSkyFlashTime() > 0 ? 1.0f : skyBase * moonPhaseMultiplier;
         float blockFactor = useBrightLightmap ? 1.4f : (blockLightRedFlicker + 1.5f);
         float nightVisionFactor = 0.0f;
         float darkenWorldFactor = Math.max(0.0f, this.renderer.getDarkenWorldAmount(partialTicks));

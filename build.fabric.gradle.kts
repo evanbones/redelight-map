@@ -20,7 +20,7 @@ val requiredJava = when {
 
 stonecutter.replacements.regex(requiredJava.isJava9Compatible) {
     replace(
-        " \\((.+) \\* (.+?) \\+ (.+?)\\)" to $$" Math.fma($1, $2, $3)",
+        " \\(([^()]+?) \\* ([^()]+?) \\+ ([^()]+?)\\)" to $$" Math.fma($1, $2, $3)",
         " Math\\.fma\\((.*?), (.*?), (.*?)\\)" to $$" ($1 * $2 + $3)"
     )
 }
