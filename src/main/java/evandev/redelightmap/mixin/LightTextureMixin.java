@@ -103,12 +103,13 @@ public abstract class LightTextureMixin {
 
         float blockLightRedFlicker = this.blockLightRedFlicker;
 
-        float dayMultiplier = Math.max(0.0f, RedelightMapConfig.brightness);
-        float nightMultiplier = Math.max(0.0f, 2.0f - RedelightMapConfig.darkness);
-        float dayTime = Mth.clamp((skyDarken - 0.2f) / 0.8f, 0.0f, 1.0f);
-        float timeMultiplier = Mth.lerp(dayTime, nightMultiplier, dayMultiplier);
+        float time = level.getTimeOfDay(0);
+        float nightTime = Mth.cos((time + 0.5f) * ((float)Math.PI * 2f)) * 2.0f + 0.25f;
+        nightTime = Mth.clamp(nightTime, 0.0F, 1.0F);
+        float moonPhaseMultiplier = Mth.lerp(RedelightMapConfig.moonPhaseDarkness,1.0f, level.getMoonBrightness());
+        moonPhaseMultiplier = Mth.lerp(nightTime, 1.0f, moonPhaseMultiplier);
 
-        float skyFactor = (level.getSkyFlashTime() > 0 ? 1.0f : skyDarken * 0.95f + 0.05f) * timeMultiplier;
+        float skyFactor = level.getSkyFlashTime() > 0 ? 1.0f : ((skyDarken * 0.95f + 0.05f) * moonPhaseMultiplier);
         float blockFactor = useBrightLightmap ? 1.4f : (blockLightRedFlicker + 1.5f);
         float nightVisionFactor = 0.0f;
         float darkenWorldFactor = Math.max(0.0f, this.renderer.getDarkenWorldAmount(partialTicks));
@@ -143,12 +144,14 @@ public abstract class LightTextureMixin {
             for (int x = 0; x < 16; ++x) {
                 float blockLevel = (x + 0.5f) / 16.0f;
                 float curvedBlockLevel = blockLevel / (3.0f - 2.0f * blockLevel);
-                float blockBrightness = Mth.lerp(ambientLightFactor, Mth.clamp(curvedBlockLevel - 0.05f, 0.0f, 1.0f), 1.0f) * blockFactor;
+                curvedBlockLevel -= 0.05f;
+                float blockBrightness = Mth.lerp(ambientLightFactor, Mth.clamp(curvedBlockLevel, 0.0f, 1.0f), 1.0f) * blockFactor;
 
-                float skyLevel = (y + 0.5f) / 16.0f + 0.11f;
-                skyLevel -= 0.3f;
+                float skyLevel = (y + 0.5f) / 16.0f;
+                skyLevel -= 0.19f;
                 float curvedSkyLevel = (skyLevel * 3.1f) / (10.0f - 9.0f * 1.3f * skyLevel);
                 float skyBrightness = Mth.lerp(ambientLightFactor, Mth.clamp(curvedSkyLevel, 0.0f, 1.0f), 1.0f) * skyFactor;
+                skyBrightness *= Mth.lerp(skyBrightness, 1.0f, 0.5f + RedelightMapConfig.brightness * 0.5f);
 
                 if (useBrightLightmap) {
                     float adjustedBlockBrightness = Mth.clamp(blockBrightness - 0.2f, 0.05f, 0.7f);
@@ -211,9 +214,6 @@ public abstract class LightTextureMixin {
                 }
                 else {
                     brightnessAdjustment = (brightnessFactor - 0.2f) / 4.0f;
-                }
-                if (brightnessAdjustment > 0.0f) {
-                    brightnessAdjustment *= timeMultiplier;
                 }
                 color.add(brightnessAdjustment, brightnessAdjustment, brightnessAdjustment);
 

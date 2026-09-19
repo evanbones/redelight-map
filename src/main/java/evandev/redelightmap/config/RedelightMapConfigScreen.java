@@ -56,8 +56,8 @@ public final class RedelightMapConfigScreen {
                     RedelightMapConfig.enabled = json.get("enabled").getAsBoolean();
                 if (json.has("brightness"))
                     RedelightMapConfig.brightness = json.get("brightness").getAsFloat();
-                if (json.has("darkness"))
-                    RedelightMapConfig.darkness = json.get("darkness").getAsFloat();
+                if (json.has("moonPhaseDarkness"))
+                    RedelightMapConfig.moonPhaseDarkness = json.get("moonPhaseDarkness").getAsFloat();
             }
         } catch (IOException ignored) {
         }
@@ -67,7 +67,7 @@ public final class RedelightMapConfigScreen {
         JsonObject json = new JsonObject();
         json.addProperty("enabled", RedelightMapConfig.enabled);
         json.addProperty("brightness", RedelightMapConfig.brightness);
-        json.addProperty("darkness", RedelightMapConfig.darkness);
+        json.addProperty("moonPhaseDarkness", RedelightMapConfig.moonPhaseDarkness);
 
         try (Writer writer = Files.newBufferedWriter(configPath(), StandardCharsets.UTF_8)) {
             GSON.toJson(json, writer);
@@ -101,16 +101,16 @@ public final class RedelightMapConfigScreen {
                         .description(OptionDescription.of(Component.translatable("redelightmap.config.option.brightness.description")))
                         .binding(1.0f, () -> RedelightMapConfig.brightness, value -> RedelightMapConfig.brightness = value)
                         .controller(opt -> FloatSliderControllerBuilder.create(opt)
-                            .range(0.0f, 2.0f)
+                            .range(0.0f, 1.0f)
                             .step(0.05f)
                             .formatValue(v -> Component.literal(Math.round(v * 100.0f) + "%")))
                         .build())
                     .option(Option.<Float>createBuilder()
-                        .name(Component.translatable("redelightmap.config.option.darkness"))
-                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.darkness.description")))
-                        .binding(1.0f, () -> RedelightMapConfig.darkness, value -> RedelightMapConfig.darkness = value)
+                        .name(Component.translatable("redelightmap.config.option.moonPhaseDarkness"))
+                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.moonPhaseDarkness.description")))
+                        .binding(1.0f, () -> RedelightMapConfig.moonPhaseDarkness, value -> RedelightMapConfig.moonPhaseDarkness = value)
                         .controller(opt -> FloatSliderControllerBuilder.create(opt)
-                            .range(0.0f, 2.0f)
+                            .range(0.0f, 1.0f)
                             .step(0.05f)
                             .formatValue(v -> Component.literal(Math.round(v * 100.0f) + "%")))
                         .build())
