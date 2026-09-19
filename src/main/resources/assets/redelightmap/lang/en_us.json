@@ -4,8 +4,8 @@
   "redelightmap.config.group.general": "General",
   "redelightmap.config.option.enabled": "Enabled",
   "redelightmap.config.option.enabled.description": "Toggles Redelight-map's custom lightmap on and off.",
-  "redelightmap.config.option.brightness": "Brightness",
+  "redelightmap.config.option.brightness": "Daytime Brightness",
   "redelightmap.config.option.brightness.description": "Adjusts daytime brightness.",
-  "redelightmap.config.option.darkness": "Darkness",
-  "redelightmap.config.option.darkness.description": "Adjusts nighttime and shadow darkness."
+  "redelightmap.config.option.moonPhaseDarkness": "Moon Phase Darkness",
+  "redelightmap.config.option.moonPhaseDarkness.description": "Adjusts amount of additional darkness from moon phases."
 }
