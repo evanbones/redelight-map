@@ -1,11 +1,3 @@
-### Added
+### Fixed
 
-- Added moonlight phase influence (@Kobber).
-
-### Changed
-
-Changed brightness config implementation (@Kobber).
-
-### Removed
-
-- Removed darkness config (redundant with the vanilla brightness slider) (@Kobber).
+- Fixed issues with Distant Horizons (and possibly other mods).

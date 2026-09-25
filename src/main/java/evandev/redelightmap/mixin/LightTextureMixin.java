@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.platform.NativeImage;
 import evandev.redelightmap.RedelightMapConfig;
-import evandev.redelightmap.compat.DistantHorizonsCompat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -14,14 +13,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import org.spongepowered.asm.mixin.*;
-
-//? if fabric {
-import net.fabricmc.loader.api.FabricLoader;
-//? } else if forge {
-/*import net.minecraftforge.fml.ModList;
-*///? } else {
-/*import net.neoforged.fml.ModList;
-*///? }
 
 //? if <=1.19.2 {
 /*import com.mojang.math.Vector3f;
@@ -64,15 +55,6 @@ public abstract class LightTextureMixin {
     @Shadow
     @Final
     private NativeImage lightPixels;
-
-    @Unique
-    private static boolean isDhLoaded() {
-        //? if fabric {
-        return FabricLoader.getInstance().isModLoaded("distanthorizons");
-        //? } else {
-        /*return ModList.get().isLoaded("distanthorizons");
-        *///? }
-    }
 
     @WrapMethod(method = "updateLightTexture")
     public void updateLightTexture(float partialTicks, Operation<Void> original) {
@@ -238,8 +220,6 @@ public abstract class LightTextureMixin {
             }
         }
 
-        if (isDhLoaded()) {
-            DistantHorizonsCompat.updateLightmap(this.lightPixels);
-        }
+        original.call(partialTicks);
     }
 }
