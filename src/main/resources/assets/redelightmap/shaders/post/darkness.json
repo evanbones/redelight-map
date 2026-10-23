@@ -1,0 +1,55 @@
+{
+  "targets": [
+    "swap",
+    { "name": "ds0", "width": 480, "height": 270 },
+    { "name": "ds1", "width": 120, "height": 68 },
+    { "name": "ds2", "width": 30, "height": 17 },
+    { "name": "ds3", "width": 8, "height": 4 },
+    { "name": "measure", "width": 1, "height": 1 }
+  ],
+  "passes": [
+    {
+      "name": "darkness",
+      "intarget": "minecraft:main",
+      "outtarget": "swap",
+      "auxtargets": [
+        { "name": "MainDepthSampler", "id": "minecraft:main:depth" }
+      ]
+    },
+    {
+      "name": "downsample",
+      "intarget": "minecraft:main",
+      "outtarget": "ds0",
+      "use_linear_filter": true
+    },
+    {
+      "name": "downsample",
+      "intarget": "ds0",
+      "outtarget": "ds1",
+      "use_linear_filter": true
+    },
+    {
+      "name": "downsample",
+      "intarget": "ds1",
+      "outtarget": "ds2",
+      "use_linear_filter": true
+    },
+    {
+      "name": "downsample",
+      "intarget": "ds2",
+      "outtarget": "ds3",
+      "use_linear_filter": true
+    },
+    {
+      "name": "downsample",
+      "intarget": "ds3",
+      "outtarget": "measure",
+      "use_linear_filter": true
+    },
+    {
+      "name": "blit",
+      "intarget": "swap",
+      "outtarget": "minecraft:main"
+    }
+  ]
+}

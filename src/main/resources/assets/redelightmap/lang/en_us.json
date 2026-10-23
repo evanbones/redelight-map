@@ -7,5 +7,10 @@
   "redelightmap.config.option.brightness": "Daytime Brightness",
   "redelightmap.config.option.brightness.description": "Adjusts daytime brightness.",
   "redelightmap.config.option.moonPhaseDarkness": "Moon Phase Darkness",
-  "redelightmap.config.option.moonPhaseDarkness.description": "Adjusts amount of additional darkness from moon phases."
+  "redelightmap.config.option.moonPhaseDarkness.description": "Adjusts amount of additional darkness from moon phases.",
+  "redelightmap.config.option.trueDarkness": "True Darkness Mode",
+  "redelightmap.config.option.trueDarkness.description": "Makes darkness truly dark",
+  "redelightmap.config.group.trueDarkness": "True Darkness Mode",
+  "redelightmap.config.option.lowLightVision": "Enable Low Light Vision",
+  "redelightmap.config.option.lowLightVision.description": "Let your eyes adapt to the dark. Allows you see a short distance in total darkness."
 }

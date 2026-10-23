@@ -6,9 +6,12 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.api.ClientModInitializer;
 import evandev.redelightmap.config.RedelightMapConfigScreen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class RedelightMap implements ClientModInitializer, ModMenuApi {
     public static final String MOD_ID = "redelightmap";
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_ID);
 
     @Override
     public void onInitializeClient() {
@@ -29,11 +32,14 @@ public final class RedelightMap implements ClientModInitializer, ModMenuApi {
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.client.ConfigScreenHandler;
 import evandev.redelightmap.config.RedelightMapConfigScreen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //? }
 
 @Mod(RedelightMap.MOD_ID)
 public final class RedelightMap {
     public static final String MOD_ID = "redelightmap";
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_ID);
 
     public RedelightMap() {
         //? if >=1.20.1 {
@@ -53,6 +59,8 @@ public final class RedelightMap {
 /*import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import evandev.redelightmap.config.RedelightMapConfigScreen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //? if >=1.21.1 {
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 //? } else {
@@ -63,6 +71,7 @@ import net.neoforged.neoforge.client.ConfigScreenHandler;
 @Mod(RedelightMap.MOD_ID)
 public final class RedelightMap {
     public static final String MOD_ID = "redelightmap";
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_ID);
 
     public RedelightMap(ModContainer container) {
         RedelightMapConfigScreen.load();

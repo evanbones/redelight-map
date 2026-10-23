@@ -4,7 +4,11 @@
   "compatibilityLevel": "JAVA_8",
   "minVersion": "0.8",
   "client": [
-    "LightTextureMixin"
+    "GameRendererAccessor",
+    "GameRendererMixin",
+    "LevelRendererMixin",
+    "LightTextureMixin",
+    "PostChainAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
