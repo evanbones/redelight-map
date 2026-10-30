@@ -12,5 +12,16 @@
   "redelightmap.config.option.trueDarkness.description": "Makes darkness truly dark",
   "redelightmap.config.group.trueDarkness": "True Darkness Mode",
   "redelightmap.config.option.lowLightVision": "Enable Low Light Vision",
-  "redelightmap.config.option.lowLightVision.description": "Let your eyes adapt to the dark. Allows you see a short distance in total darkness."
+  "redelightmap.config.option.lowLightVision.description": "Let your eyes adapt to the dark. Allows you see a short distance in total darkness.",
+  "redelightmap.config.option.lowLightVisionRange": "Range",
+  "redelightmap.config.option.lowLightVisionBrightness": "Brightness",
+  "redelightmap.config.option.lowLightVisionDesaturation": "Desaturation",
+  "redelightmap.config.option.lowLightVisionDarkAdaptionTime": "Darkness Adaption Time",
+  "redelightmap.config.option.lowLightVisionLightAdaptionTime": "Light Adaption Time",
+  "redelightmap.config.group.lowLightVision": "Low Light Vision",
+  "redelightmap.config.option.lowLightVisionRange.description": "How far the low light vision lets you see",
+  "redelightmap.config.option.lowLightVisionBrightness.description": "Brightness of the low light vision effect",
+  "redelightmap.config.option.lowLightVisionDesaturation.description": "How much the low light vision is desaturated",
+  "redelightmap.config.option.lowLightVisionDarkAdaptionTime.description": "Approximate time it takes for your eyes to fully adapt to the dark",
+  "redelightmap.config.option.lowLightVisionLightAdaptionTime.description": "Approximate time it takes for your eyes to adapt back to normal light"
 }

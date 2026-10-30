@@ -11,6 +11,11 @@ public final class RedelightMapConfig {
     public static float moonPhaseDarkness = 0.5f;
     public static boolean trueDarkMode = true;
     public static boolean lowLightVision = true;
+    public static float lowLightVisionDesaturation = 0.75f;
+    public static float lowLightVisionRange = 14.0f;
+    public static float lowLightVisionBrightness = 4.0f;
+    public static float lowLightVisionDarkAdaptionTime = 3.0f;
+    public static float lowLightVisionLightAdaptionTime = 0.6f;
 
     public static float getMoonPhaseMultiplier(ClientLevel level) {
         float time = level.getTimeOfDay(0);

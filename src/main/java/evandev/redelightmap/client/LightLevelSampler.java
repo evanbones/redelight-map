@@ -10,7 +10,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class ViewBrightnessSampler {
+public class LightLevelSampler {
     private static final int SAMPLE_GRID_COLS = 8;
     private static final int SAMPLE_GRID_ROWS = 5;
     private static final double SAMPLE_RANGE = 32.0;

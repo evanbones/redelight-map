@@ -42,30 +42,36 @@ public class DarknessPostEffect {
         float tanHalfFovX = tanHalfFovY * ((float) renderTarget.width / renderTarget.height);
 
         if (RedelightMapConfig.lowLightVision) {
-            float screenBrightness = measureScreenBrightness(darkness);
-            float brightScreenThreshold = 0.05f;
+            float averageScreenBrightness = measureScreenBrightness(darkness);
+            float averageLightLevel = LightLevelSampler.getAverage(minecraft.level, camera, tanHalfFovX, tanHalfFovY);
+            float screenBrightnessThreshold = 0.1f;
+            float lightLevelThreshold = 4.0f;
+            float lightLevelThresholdStart = 6.0f;
             float targetLowLightAmount = 0.0f;
-            float adaptationRate = 0.01f;
-            float viewBrightness = ViewBrightnessSampler.getAverage(minecraft.level, camera, tanHalfFovX, tanHalfFovY);
-            float FULL_VISION_LIGHT = 3.0f;
-            float NO_VISION_LIGHT = 5.0f;
+            float adaptationRate = RedelightMapConfig.lowLightVisionDarkAdaptionTime;
 
-            if (screenBrightness > brightScreenThreshold) {
+            if (averageScreenBrightness > screenBrightnessThreshold) {
                 targetLowLightAmount = 0.0f;
-                adaptationRate =  screenBrightness;
-            } else if (!Float.isNaN(viewBrightness)) {
-                targetLowLightAmount = Mth.clamp((NO_VISION_LIGHT - viewBrightness) / (NO_VISION_LIGHT - FULL_VISION_LIGHT), 0.0f,1.0f);
-                adaptationRate = targetLowLightAmount < LowLightVisionAmount ? viewBrightness / 50.0f : 0.01f;
+                adaptationRate = RedelightMapConfig.lowLightVisionLightAdaptionTime;
+            } else if (!Float.isNaN(averageLightLevel)) {
+                targetLowLightAmount = Mth.clamp((lightLevelThresholdStart - averageLightLevel) / (lightLevelThresholdStart - lightLevelThreshold), 0.0f,1.0f);
+                adaptationRate = targetLowLightAmount > LowLightVisionAmount ? RedelightMapConfig.lowLightVisionDarkAdaptionTime : RedelightMapConfig.lowLightVisionLightAdaptionTime;
             }
-            float blend = 1.0f - (float) Math.exp(-adaptationRate * tickDelta);
-            LowLightVisionAmount += (targetLowLightAmount - LowLightVisionAmount) * blend;
+
+            float delta = targetLowLightAmount - LowLightVisionAmount;
+            float step = Math.min((0.05f / Math.max(adaptationRate, 0.001f)) * tickDelta, Math.abs(delta));
+
+            LowLightVisionAmount += Math.copySign(step, delta);
         } else {
             LowLightVisionAmount = 0.0f;
         }
 
         for (PostPass pass : ((PostChainAccessor) darkness).getPasses()) {
             pass.getEffect().safeGetUniform("FovProj").set(tanHalfFovX, tanHalfFovY);
-            pass.getEffect().safeGetUniform("LowLightVisionAmount").set(LowLightVisionAmount);
+            pass.getEffect().safeGetUniform("LowLightVisionAmount").set(LowLightVisionAmount * LowLightVisionAmount);
+            pass.getEffect().safeGetUniform("LowLightVisionDesaturation").set(RedelightMapConfig.lowLightVisionDesaturation);
+            pass.getEffect().safeGetUniform("LowLightVisionBrightness").set(RedelightMapConfig.lowLightVisionBrightness);
+            pass.getEffect().safeGetUniform("LowLightVisionRange").set(RedelightMapConfig.lowLightVisionRange);
         }
 
         if (opaqueDepthTarget != null) {
