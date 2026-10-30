@@ -85,19 +85,13 @@ public abstract class LightTextureMixin {
 
         float blockLightRedFlicker = this.blockLightRedFlicker;
 
-        float time = level.getTimeOfDay(0);
-        float nightTime = Mth.cos((time + 0.5f) * ((float)Math.PI * 2f)) * 2.0f + 0.25f;
-        nightTime = Mth.clamp(nightTime, 0.0F, 1.0F);
-        float moonPhaseMultiplier = Mth.lerp(RedelightMapConfig.moonPhaseDarkness,1.0f, level.getMoonBrightness());
-        moonPhaseMultiplier = Mth.lerp(nightTime, 1.0f, moonPhaseMultiplier);
-
         float skyBase = (skyDarken * 0.95f + 0.05f);
-        float skyFactor = level.getSkyFlashTime() > 0 ? 1.0f : skyBase * moonPhaseMultiplier;
+        float skyFactor = level.getSkyFlashTime() > 0 ? 1.0f : skyBase * RedelightMapConfig.getMoonPhaseMultiplier(level);
         float blockFactor = useBrightLightmap ? 1.4f : (blockLightRedFlicker + 1.5f);
         float nightVisionFactor = 0.0f;
         float darkenWorldFactor = Math.max(0.0f, this.renderer.getDarkenWorldAmount(partialTicks));
 
-        float skyLightBrightness = Mth.lerp(0.35f, skyDarken, 1.0f);
+        float skyLightBrightness = Mth.lerp(0.45f, skyDarken, 1.0f);
         Vector3f skyLightColor = new Vector3f(
             skyLightBrightness,
             skyLightBrightness,
@@ -194,6 +188,22 @@ public abstract class LightTextureMixin {
                 float brightnessAdjustment;
                 if (useBrightLightmap) {
                     brightnessAdjustment = (brightnessFactor * (brightnessFactor / 1.7f) - 0.3f) / 4.0f;
+                }
+                else if (RedelightMapConfig.trueDarkMode) {
+                    brightnessAdjustment = 0.0f;
+
+                    color.add(
+                        Mth.clamp(color.x() * brightnessFactor, 0.0f, (brightnessFactor - 0.2f) / 4.0f),
+                        Mth.clamp(color.y() * brightnessFactor, 0.0f, (brightnessFactor - 0.2f) / 4.0f),
+                        Mth.clamp(color.z() * brightnessFactor, 0.0f, (brightnessFactor - 0.2f) / 4.0f)
+                    );
+
+                    float minBrightness = 0.045f;
+                    color.set(
+                        Mth.clamp(color.x(), minBrightness, 1.0f),
+                        Mth.clamp(color.y(), minBrightness, 1.0f),
+                        Mth.clamp(color.z(), minBrightness, 1.0f)
+                    );
                 }
                 else {
                     brightnessAdjustment = (brightnessFactor - 0.2f) / 4.0f;

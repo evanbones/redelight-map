@@ -58,6 +58,20 @@ public final class RedelightMapConfigScreen {
                     RedelightMapConfig.brightness = json.get("brightness").getAsFloat();
                 if (json.has("moonPhaseDarkness"))
                     RedelightMapConfig.moonPhaseDarkness = json.get("moonPhaseDarkness").getAsFloat();
+                if (json.has("trueDarkMode"))
+                    RedelightMapConfig.trueDarkMode = json.get("trueDarkMode").getAsBoolean();
+                if (json.has("lowLightVision"))
+                    RedelightMapConfig.lowLightVision = json.get("lowLightVision").getAsBoolean();
+                if (json.has("lowLightVisionDesaturation"))
+                    RedelightMapConfig.lowLightVisionDesaturation = json.get("lowLightVisionDesaturation").getAsFloat();
+                if (json.has("lowLightVisionBrightness"))
+                    RedelightMapConfig.lowLightVisionBrightness = json.get("lowLightVisionBrightness").getAsFloat();
+                if (json.has("lowLightVisionRange"))
+                    RedelightMapConfig.lowLightVisionRange = json.get("lowLightVisionRange").getAsFloat();
+                if (json.has("lowLightVisionDarkAdaptionTime"))
+                    RedelightMapConfig.lowLightVisionDarkAdaptionTime = json.get("lowLightVisionDarkAdaptionTime").getAsFloat();
+                if (json.has("lowLightVisionLightAdaptionTime"))
+                    RedelightMapConfig.lowLightVisionLightAdaptionTime = json.get("lowLightVisionLightAdaptionTime").getAsFloat();
             }
         } catch (IOException ignored) {
         }
@@ -68,6 +82,13 @@ public final class RedelightMapConfigScreen {
         json.addProperty("enabled", RedelightMapConfig.enabled);
         json.addProperty("brightness", RedelightMapConfig.brightness);
         json.addProperty("moonPhaseDarkness", RedelightMapConfig.moonPhaseDarkness);
+        json.addProperty("lowLightVision", RedelightMapConfig.lowLightVision);
+        json.addProperty("trueDarkMode", RedelightMapConfig.trueDarkMode);
+        json.addProperty("lowLightVisionDesaturation", RedelightMapConfig.lowLightVisionDesaturation);
+        json.addProperty("lowLightVisionBrightness", RedelightMapConfig.lowLightVisionBrightness);
+        json.addProperty("lowLightVisionRange", RedelightMapConfig.lowLightVisionRange);
+        json.addProperty("lowLightVisionLightAdaptionTime", RedelightMapConfig.lowLightVisionLightAdaptionTime);
+        json.addProperty("lowLightVisionDarkAdaptionTime", RedelightMapConfig.lowLightVisionDarkAdaptionTime);
 
         try (Writer writer = Files.newBufferedWriter(configPath(), StandardCharsets.UTF_8)) {
             GSON.toJson(json, writer);
@@ -102,7 +123,7 @@ public final class RedelightMapConfigScreen {
                         .binding(1.0f, () -> RedelightMapConfig.brightness, value -> RedelightMapConfig.brightness = value)
                         .controller(opt -> FloatSliderControllerBuilder.create(opt)
                             .range(0.0f, 1.0f)
-                            .step(0.05f)
+                            .step(0.01f)
                             .formatValue(v -> Component.literal(Math.round(v * 100.0f) + "%")))
                         .build())
                     .option(Option.<Float>createBuilder()
@@ -111,9 +132,67 @@ public final class RedelightMapConfigScreen {
                         .binding(1.0f, () -> RedelightMapConfig.moonPhaseDarkness, value -> RedelightMapConfig.moonPhaseDarkness = value)
                         .controller(opt -> FloatSliderControllerBuilder.create(opt)
                             .range(0.0f, 1.0f)
-                            .step(0.05f)
+                            .step(0.01f)
                             .formatValue(v -> Component.literal(Math.round(v * 100.0f) + "%")))
                         .build())
+                    .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("redelightmap.config.option.trueDarkness"))
+                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.trueDarkness.description")))
+                        .binding(true, () -> RedelightMapConfig.trueDarkMode, value -> RedelightMapConfig.trueDarkMode = value)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                    .build())
+                .group(OptionGroup.createBuilder()
+                    .name(Component.translatable("redelightmap.config.group.lowLightVision"))
+                    .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("redelightmap.config.option.lowLightVision"))
+                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.lowLightVision.description")))
+                        .binding(true, () -> RedelightMapConfig.lowLightVision, value -> RedelightMapConfig.lowLightVision = value)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                    .option(Option.<Float>createBuilder()
+                        .name(Component.translatable("redelightmap.config.option.lowLightVisionRange"))
+                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.lowLightVisionRange.description")))
+                        .binding(14.0f, () -> RedelightMapConfig.lowLightVisionRange, value -> RedelightMapConfig.lowLightVisionRange = value)
+                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                            .range(3.0f, 32.0f)
+                            .step(0.1f))
+                        .build())
+                    .option(Option.<Float>createBuilder()
+                        .name(Component.translatable("redelightmap.config.option.lowLightVisionBrightness"))
+                        .description(OptionDescription.of(Component.translatable("redelightmap.config.option.lowLightVisionBrightness.description")))
+                        .binding(4.0f, () -> RedelightMapConfig.lowLightVisionBrightness, value -> RedelightMapConfig.lowLightVisionBrightness = value)
+                        .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                .range(1.0f, 10.0f)
+                                .step(0.1f))
+                        .build())
+                    .option(Option.<Float>createBuilder()
+                            .name(Component.translatable("redelightmap.config.option.lowLightVisionDesaturation"))
+                            .description(OptionDescription.of(Component.translatable("redelightmap.config.option.lowLightVisionDesaturation.description")))
+                            .binding(0.75f, () -> RedelightMapConfig.lowLightVisionDesaturation, value -> RedelightMapConfig.lowLightVisionDesaturation = value)
+                            .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                    .range(0.0f, 1.0f)
+                                    .step(0.01f)
+                                    .formatValue(v -> Component.literal(Math.round(v * 100.0f) + "%")))
+                            .build())
+                    .option(Option.<Float>createBuilder()
+                            .name(Component.translatable("redelightmap.config.option.lowLightVisionDarkAdaptionTime"))
+                            .description(OptionDescription.of(Component.translatable("redelightmap.config.option.lowLightVisionDarkAdaptionTime.description")))
+                            .binding(3.0f, () -> RedelightMapConfig.lowLightVisionDarkAdaptionTime, value -> RedelightMapConfig.lowLightVisionDarkAdaptionTime = value)
+                            .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                    .range(0.0f, 10.0f)
+                                    .step(0.1f)
+                                    .formatValue(v -> Component.literal(v + "s")))
+                            .build())
+                    .option(Option.<Float>createBuilder()
+                            .name(Component.translatable("redelightmap.config.option.lowLightVisionLightAdaptionTime"))
+                            .description(OptionDescription.of(Component.translatable("redelightmap.config.option.lowLightVisionLightAdaptionTime.description")))
+                            .binding(0.6f, () -> RedelightMapConfig.lowLightVisionLightAdaptionTime, value -> RedelightMapConfig.lowLightVisionLightAdaptionTime = value)
+                            .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                    .range(0.0f, 10.0f)
+                                    .step(0.1f)
+                                    .formatValue(v -> Component.literal(v + "s")))
+                            .build())
                     .build())
                 .build())
             .save(RedelightMapConfigScreen::save)
